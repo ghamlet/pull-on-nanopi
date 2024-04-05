@@ -74,7 +74,7 @@ def MoveToPointCallback(msg):
 
 if __name__=='__main__':
 
-    ip_addr, port = "127.0.0.1", 8000
+    ip_addr, port = "192.168.0.80", 8000
     client = init_server(ip_addr, port)
     main_loop(client)
 
