@@ -33,7 +33,7 @@ long packet_timer = 0;
 int packet_phase = 0;
 
 // Определяет будет ли отправляться данные  робота
-int SendMode = 0;
+int SendMode = 1;
 
 // Эта переменная нужна для планирования траектории
 float ex_pos_x = 0;
@@ -65,6 +65,7 @@ const uint8_t handler_index_speed = 2;
 void setup()
 {
   Serial.begin(9600); // Скорость отправки и приема данных через последовательный порт.
+  Serial1.begin(9600); //Скорость обмена данными между OpenCM и NanoPi Air
   while (!Serial); // TODO: если вам не нужен запуск руки после открытия последовательного порта, то эту строчку нужно убрать: она стопорит программу до этого момента.
  
  //Для логирования и контроля ошибок
@@ -111,6 +112,7 @@ bool result = false;
     Serial.println("Failed to add sync write handler");
   }
   
+
   Serial.println("Setting SyncWrite Moving_Speed");
 //Настройка синхронной записи Moving_Speed handler_index_speed = 2
    result = dxl_wb.addSyncWriteHandler(1, "Moving_Speed", &log);
@@ -180,14 +182,14 @@ bool result = false;
   }
 
   /***************НАЧАЛО БЛОКА ЧТЕНИЯ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА*******************************/
-  if (Serial.available())
+  if (Serial1.available())
   {
     float buf_distance = 0.;
     float buf_rotation = 0.;
     float buf_z = 0.;
     float buf_fi = 0.;
 
-    char c = Serial.read(); //читаем первый байт
+    char c = Serial1.read(); //читаем первый байт
 
     //Начинаем парсинг пакета
     switch (c)
@@ -229,9 +231,9 @@ bool result = false;
       case 'g':
         /***************НАЧАЛО ПАРСЕРА*******************************/
 
-        if ( (c = Serial.read()) == ':' )
+        if ( (c = Serial1.read()) == ':' )
         {
-          while ((c = Serial.read()) != ':')
+          while ((c = Serial1.read()) != ':')
           {
             buf_rotation *= 10;
             buf_rotation += (int)(c - '0');
@@ -242,12 +244,12 @@ bool result = false;
           {
             Serial.println("\nRotation out of bounds. Max: " + String(MAX_ROT) + " Min: " + String(MIN_ROT));
             // Очищаем буфер
-            while (Serial.available() > 0)
-              Serial.read();
+            while (Serial1.available() > 0)
+              Serial1.read();
           }
           else
           {
-            while ((c = Serial.read()) != ':' )
+            while ((c = Serial1.read()) != ':' )
             {
               buf_distance *= 10;
               buf_distance += (int)(c - '0');
@@ -259,20 +261,20 @@ bool result = false;
             if ((buf_distance > MAX_DIST) || (buf_distance < MIN_DIST))
             {
               Serial.println("\nDistance out of bounds. Max: " + String(MAX_DIST) + " Min: " + String(MIN_DIST));
-              while (Serial.available() > 0)
-                Serial.read();
+              while (Serial1.available() > 0)
+                Serial1.read();
             }
             else
             {
               int sign = 1;
-              if ((c = Serial.read()) == '-')
+              if ((c = Serial1.read()) == '-')
                 sign = -1;
               else
               {
                 buf_fi *= 10;
                 buf_fi += (int)(c - '0');
               }
-              while ((c = Serial.read()) != ':' )
+              while ((c = Serial1.read()) != ':' )
               {
                 buf_fi *= 10;
                 buf_fi += (int)(c - '0');
@@ -283,12 +285,12 @@ bool result = false;
               if ((fabs(buf_fi) > MAX_FI) || (fabs(buf_fi) < MIN_FI))
               {
                 Serial.println("\nEnd-effector rotation out of bounds. Max module: " + String(MAX_FI) + " Min: " + String(MIN_FI));
-                while (Serial.available() > 0)
-                  Serial.read();
+                while (Serial1.available() > 0)
+                  Serial1.read();
               }
               else
               {
-                if ((c = Serial.read()) == '1')
+                if ((c = Serial1.read()) == '1')
                   buf_z = CARGO_POS_Z;
                 else if ( c == '0')
                 {
@@ -306,13 +308,13 @@ bool result = false;
                   buf_z = (CARGO_POS_Z + ABOVE_CARGO_Z) / 2 ;
                   buf_distance = 180.;
                 }
-                if ((c = Serial.read()) == ':')
+                if ((c = Serial1.read()) == ':')
                 {
-                  if ((c = Serial.read()) == '0')
+                  if ((c = Serial1.read()) == '0')
                     goal_position[sync_order(GRIPPER)] = END_EFFECTOR_OPEN;
                   else if (c == '1')
                     goal_position[sync_order(GRIPPER)] = END_EFFECTOR_CLOSE;
-                  if ((c = Serial.read()) == '#')
+                  if ((c = Serial1.read()) == '#')
                   {
                     // Движение возможно только после полностью корректного пакета
                     Serial.println("\nExecuting");
@@ -332,16 +334,16 @@ bool result = false;
                   else
                   {
                     Serial.println("\nIncorrect packet: No # symbol");
-                    while (Serial.available() > 0)
-                      Serial.read();
+                    while (Serial1.available() > 0)
+                      Serial1.read();
                   }
                   break;
                 }
                 else
                 {
                   Serial.println("\nIncorrect packet: No gripper command");
-                  while (Serial.available() > 0)
-                    Serial.read();
+                  while (Serial1.available() > 0)
+                    Serial1.read();
                 }
               }
             }
@@ -350,16 +352,16 @@ bool result = false;
         else
         {
           Serial.println("\nIncorrect packet");
-          while (Serial.available() > 0)
-            Serial.read();
+          while (Serial1.available() > 0)
+            Serial1.read();
         }
         break;
       /***************КОНЕЦ ПАРСЕРА*******************************/
 
       default:
         Serial.println("\nIncorrect packet");
-        while (Serial.available() > 0)
-          Serial.read();
+        while (Serial1.available() > 0)
+          Serial1.read();
     }
   }
   /***************КОНЕЦ БЛОКА ЧТЕНИЯ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА*******************************/
