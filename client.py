@@ -1,6 +1,6 @@
 import socket
 
-SERVICE_CENTER = ("127.0.0.1", 8000)
+SERVICE_CENTER = ("192.168.0.80", 8000)
 
 eyecar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 eyecar.connect(SERVICE_CENTER)  #connect to the server port

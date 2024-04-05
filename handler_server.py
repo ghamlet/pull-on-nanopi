@@ -24,6 +24,7 @@ def init_server(ip_center, port):
 
 
 def main_loop(client):
+    prev_msg = None
     while True:
         msg = ''
         while True:
@@ -32,8 +33,9 @@ def main_loop(client):
             msg += symbol
         print("I recive message: ",msg)    
         
-        MoveToPointCallback(msg)
-
+        if msg != prev_msg:
+            MoveToPointCallback(msg)
+            prev_msg = msg
 
 def ParseMsg(msg):
     try:

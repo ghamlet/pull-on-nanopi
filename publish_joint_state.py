@@ -31,6 +31,7 @@ def parse_msg(msg: str):
 
 
 def convert_pose(msg: str):
+    pose_cmd = ''
 
     msg = parse_msg(msg)
     name = msg['name']
@@ -45,17 +46,18 @@ def convert_pose(msg: str):
 
     for i in range(len(name)):
         if(name[i] == 'ang_joint_5'): 
-            poseListPub.append(round((poseList[i]*fromRncToRadFor12)+zeroPose[i]))
+            poseListPub.append(int((poseList[i]*fromRncToRadFor12)+zeroPose[i]))
 
         elif(name[i] == 'gripper'):
-            poseListPub.append(round(poseList[i]*fromEncToLinGripper + minEncPoseForGripper))
+            poseListPub.append(int(poseList[i]*fromEncToLinGripper + minEncPoseForGripper))
             
         else:
-            poseListPub.append(round((poseList[i]*fromEncToRadFor1066428)+zeroPose[i]))
+            poseListPub.append(int((poseList[i]*fromEncToRadFor1066428)+zeroPose[i]))
            
 
     jointcmd['position'] = poseListPub
     print(jointcmd)
-
-    return jointcmd    
+    
+    pose_cmd = ':'.join(poseListPub)
+    return pose_cmd    
 
