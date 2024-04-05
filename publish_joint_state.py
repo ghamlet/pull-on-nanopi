@@ -16,7 +16,7 @@ countOfJoint = 6
 
 
 
-def parse_msg(msg: str):
+def parse_msg(msg):
     jointState = {
         "name": [],
         "position":[]
@@ -30,7 +30,7 @@ def parse_msg(msg: str):
     return jointState
 
 
-def convert_pose(msg: str):
+def convert_pose(msg):
     pose_cmd = ''
 
     msg = parse_msg(msg)
