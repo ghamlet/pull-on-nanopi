@@ -184,11 +184,7 @@ bool result = false;
   /***************НАЧАЛО БЛОКА ЧТЕНИЯ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА*******************************/
   if (Serial1.available())
   {
-    float buf_distance = 0.;
-    float buf_rotation = 0.;
-    float buf_z = 0.;
-    float buf_fi = 0.;
-
+    
     char c = Serial1.read(); //читаем первый байт
 
     //Начинаем парсинг пакета
@@ -514,11 +510,6 @@ void RelaxServos()
 const char *log;
 bool result = false;
   
-  allow_trajectory = 0;
-  first_move = 1;
-  distance = 0.;
-  rotation = 0.;
-  z = 0.;
   
 //  dxl_wb.syncWrite("Torque_Enable", torque_off);
   result = dxl_wb.syncWrite(handler_index_torque, torque_off, &log);
@@ -527,9 +518,6 @@ bool result = false;
     Serial.println(log);
     Serial.println("Failed to sync torque_off");
   }
-
-  
-  
 }
 
 
