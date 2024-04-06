@@ -15,7 +15,7 @@ def init_server(ip_center, port):
     SERVICE_CENTER = (ip_center, port)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(SERVICE_CENTER) 
-    server.listen(1)   
+    server.listen(10)   
     print("Waiting for connection...")
     client, address = server.accept()
 

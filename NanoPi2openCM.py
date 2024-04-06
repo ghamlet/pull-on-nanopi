@@ -40,6 +40,7 @@ class SerialConnection:
         self.baudrate = baudrate
         self.ser = None
 
+
     def open(self):
         try:
             self.ser = serial.Serial(self.port, baudrate=self.baudrate, timeout=1)
@@ -55,29 +56,20 @@ class SerialConnection:
             print("An error occurred:", str(e))
             return None
 
+
     def close(self):
         if self.ser is not None and self.ser.is_open:
             self.ser.close()
             print("Serial connection closed.")
 
+
     def send_data(self, data):
         if self.ser is not None:
-            print(data)
+            print("Data to transmission", data)
             self.ser.write(data.encode())
 
 
-def main():
-    port = "/dev/ttyS1"
-    baudrate = 9600
-    data = "Hello, World!"
 
-    connection = SerialConnection(port, baudrate)
-    connection.open()
-
-    if connection.ser is not None:
-        connection.send_data(data)
-
-    connection.close()
 
 
 
