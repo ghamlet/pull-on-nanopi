@@ -65,7 +65,7 @@ class SerialConnection:
 
     def send_data(self, data):
         if self.ser is not None:
-            print("Data to transmission", data)
+            print("Data to transmission: ", data)
             self.ser.write(data.encode())
 
 
