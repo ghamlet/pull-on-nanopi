@@ -58,6 +58,6 @@ def convert_pose(msg):
     jointcmd['position'] = poseListPub
     print(jointcmd)
     
-    pose_cmd = ':'.join(str(pose) for pose in poseListPub) + "#"
+    pose_cmd = 'g' + ':'.join(str(pose) for pose in poseListPub) + "#"
     return pose_cmd    
 
