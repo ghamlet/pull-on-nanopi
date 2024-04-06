@@ -1,7 +1,7 @@
 #!/usr/bin/env python
  
 import socket
-import NanoPi2openCM
+from NanoPi2openCM import SerialConnection
 from RoboticArmClass import RoboticArm
 import publish_joint_state 
 
@@ -31,7 +31,7 @@ def main_loop(client):
             symbol = client.recv(1).decode()
             if symbol =='#': break  #stop bit
             msg += symbol
-        print("I recive message: ",msg)    
+        print("I recive message: ", msg)
         
         if msg != prev_msg:
             MoveToPointCallback(msg)
@@ -68,11 +68,18 @@ def MoveToPointCallback(msg):
         print('Point can be reached')
 
         joint_Cmd = publish_joint_state.convert_pose(strCmd)
-        NanoPi2openCM.send_data(joint_Cmd)
+        # NanoPi2openCM.send_data(joint_Cmd)
+        connection.send_data(joint_Cmd)
+        
 
+        
 
 
 if __name__=='__main__':
+
+    ser_port, baudrate = "/dev/ttyS1", 9600
+    connection = SerialConnection(ser_port, baudrate)
+    connection.open()
 
     ip_addr, port = "192.168.0.80", 8000
     client = init_server(ip_addr, port)
