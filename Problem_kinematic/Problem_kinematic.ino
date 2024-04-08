@@ -139,13 +139,13 @@ bool result = false;
   Serial.println("Ready");
   RedrawMenu();
 
-  allow_trajectory = 0; //Изначально планирования траектории нет
-  distance = 0.;
-  rotation = 0.;
-  z = 0.;
-  planed_x = 0.;
-  planed_z = 0.;
-  planed_angle = 0.;
+  // allow_trajectory = 0; //Изначально планирования траектории нет
+  // distance = 0.;
+  // rotation = 0.;
+  // z = 0.;
+  // planed_x = 0.;
+  // planed_z = 0.;
+  // planed_angle = 0.;
   packet_timer = millis();
 }
 
@@ -176,10 +176,11 @@ bool result = false;
         get_data_pos(data_packet, "Present_Position");
         Serial.print("M:");
     }
-    //  Serial.println(dxl_wb.itemRead(dxl_id[0], "Present_Temperature"));
     print_packet(data_packet);
     packet_phase++;
   }
+
+
 
   /***************НАЧАЛО БЛОКА ЧТЕНИЯ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА*******************************/
   if (Serial1.available())
@@ -235,6 +236,7 @@ bool result = false;
             buf_rotation += (int)(c - '0');
             if (buf_rotation > 1000)
               break;
+
           }
           if ((buf_rotation > MAX_ROT) || (buf_rotation < MIN_ROT))
           {
